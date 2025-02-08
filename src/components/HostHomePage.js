@@ -19,7 +19,7 @@ import {
 import Text from "antd/lib/typography/Text";
 import React from "react";
 import UploadStay from "./UploadStay";
-import { getStaysByHost } from "../utils";
+import { deleteStay, getStaysByHost } from "../utils";
 
 
 export class StayDetailInfoButton extends React.Component {
@@ -51,7 +51,12 @@ export class StayDetailInfoButton extends React.Component {
         return (
             <>
                 <Tooltip title="View Stay Details">
-                    <Button onClick={this.openModal} icon={<InfoCircleOutlined />} />
+                    <Button
+                        style={{ border: "none" }}
+                        onClick={this.openModal}
+                        size="large"
+                        icon={<InfoCircleOutlined />}
+                    />
                 </Tooltip>
                 {modalVisible && (
                     <Modal
@@ -73,6 +78,48 @@ export class StayDetailInfoButton extends React.Component {
                     </Modal>
                 )}
             </>
+        );
+    }
+}
+
+
+class RemoveStayButton extends React.Component {
+    state = {
+        loading: false,
+    };
+
+
+    handleRemoveStay = async () => {
+        const { stay, onRemoveSuccess } = this.props;
+        this.setState({
+            loading: true,
+        });
+
+
+        try {
+            await deleteStay(stay.id);
+            onRemoveSuccess();
+        } catch (error) {
+            message.error(error.message);
+        } finally {
+            this.setState({
+                loading: false,
+            });
+        }
+    };
+
+
+    render() {
+        return (
+            <Button
+                loading={this.state.loading}
+                onClick={this.handleRemoveStay}
+                danger={true}
+                shape="round"
+                type="primary"
+            >
+                Remove Stay
+            </Button>
         );
     }
 }
@@ -138,7 +185,9 @@ class MyStays extends React.Component {
                                 </div>
                             }
                             actions={[]}
-                            extra={null}
+                            extra={
+                                <RemoveStayButton stay={item} onRemoveSuccess={this.loadData} />
+                            }
                         >
                             <Carousel
                                 dots={false}
