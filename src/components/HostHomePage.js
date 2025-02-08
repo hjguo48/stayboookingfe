@@ -144,6 +144,58 @@ class ReservationList extends React.Component {
 }
 
 
+class ViewReservationsButton extends React.Component {
+    state = {
+        modalVisible: false,
+    };
+
+
+    openModal = () => {
+        this.setState({
+            modalVisible: true,
+        });
+    };
+
+
+    handleCancel = () => {
+        this.setState({
+            modalVisible: false,
+        });
+    };
+
+
+    render() {
+        const { stay } = this.props;
+        const { modalVisible } = this.state;
+
+
+        const modalTitle = `Reservations of ${stay.name}`;
+
+
+        return (
+            <>
+                <Button onClick={this.openModal} shape="round">
+                    View Reservations
+                </Button>
+                {modalVisible && (
+                    <Modal
+                        title={modalTitle}
+                        centered={true}
+                        visible={modalVisible}
+                        closable={false}
+                        footer={null}
+                        onCancel={this.handleCancel}
+                        destroyOnClose={true}
+                    >
+                        <ReservationList stayId={stay.id} />
+                    </Modal>
+                )}
+            </>
+        );
+    }
+}
+
+
 class RemoveStayButton extends React.Component {
     state = {
         loading: false,
@@ -245,7 +297,7 @@ class MyStays extends React.Component {
                                     <StayDetailInfoButton stay={item} />
                                 </div>
                             }
-                            actions={[]}
+                            actions={[<ViewReservationsButton stay={item} />]}
                             extra={
                                 <RemoveStayButton stay={item} onRemoveSuccess={this.loadData} />
                             }
