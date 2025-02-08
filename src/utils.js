@@ -1,4 +1,4 @@
-const domain = "https://staybooking-166041698865.us-west1.run.app"
+const domain = "https://staybooking-650528773979.us-west1.run.app/"
 
 export const login = (credential) => {
     const loginUrl = `${domain}/auth/login`;
