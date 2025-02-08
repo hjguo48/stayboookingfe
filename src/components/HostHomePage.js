@@ -1,6 +1,21 @@
-import { Card, Carousel, Image, List, message, Tabs } from "antd";
+import {
+    Button,
+    Card,
+    Carousel,
+    Image,
+    List,
+    message,
+    Modal,
+    Space,
+    Tabs,
+    Tooltip,
+} from "antd";
 import TabPane from "antd/lib/tabs/TabPane";
-import { LeftCircleFilled, RightCircleFilled } from "@ant-design/icons";
+import {
+    InfoCircleOutlined,
+    LeftCircleFilled,
+    RightCircleFilled,
+} from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import React from "react";
 import UploadStay from "./UploadStay";
@@ -8,8 +23,57 @@ import { getStaysByHost } from "../utils";
 
 
 export class StayDetailInfoButton extends React.Component {
+    state = {
+        modalVisible: false,
+    };
+
+
+    openModal = () => {
+        this.setState({
+            modalVisible: true,
+        });
+    };
+
+
+    handleCancel = () => {
+        this.setState({
+            modalVisible: false,
+        });
+    };
+
+
     render() {
-        return <></>;
+        const { stay } = this.props;
+        const { name, description, address, guestNumber } = stay;
+        const { modalVisible } = this.state;
+
+
+        return (
+            <>
+                <Tooltip title="View Stay Details">
+                    <Button onClick={this.openModal} icon={<InfoCircleOutlined />} />
+                </Tooltip>
+                {modalVisible && (
+                    <Modal
+                        title={name}
+                        open={true}
+                        centered={true}
+                        closable={false}
+                        footer={null}
+                        onCancel={this.handleCancel}
+                    >
+                        <Space direction="vertical">
+                            <Text strong={true}>Description</Text>
+                            <Text type="secondary">{description}</Text>
+                            <Text strong={true}>Address</Text>
+                            <Text type="secondary">{address}</Text>
+                            <Text strong={true}>Guest Number</Text>
+                            <Text type="secondary">{guestNumber}</Text>
+                        </Space>
+                    </Modal>
+                )}
+            </>
+        );
     }
 }
 
