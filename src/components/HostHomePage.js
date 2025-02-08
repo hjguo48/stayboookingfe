@@ -19,7 +19,7 @@ import {
 import Text from "antd/lib/typography/Text";
 import React from "react";
 import UploadStay from "./UploadStay";
-import { deleteStay, getStaysByHost } from "../utils";
+import { deleteStay, getReservationsByStay, getStaysByHost } from "../utils";
 
 
 export class StayDetailInfoButton extends React.Component {
@@ -78,6 +78,67 @@ export class StayDetailInfoButton extends React.Component {
                     </Modal>
                 )}
             </>
+        );
+    }
+}
+
+
+class ReservationList extends React.Component {
+    state = {
+        loading: false,
+        reservations: [],
+    };
+
+
+    componentDidMount() {
+        this.loadData();
+    }
+
+
+    loadData = async () => {
+        this.setState({
+            loading: true,
+        });
+
+
+        try {
+            const resp = await getReservationsByStay(this.props.stayId);
+            this.setState({
+                reservations: resp,
+            });
+        } catch (error) {
+            message.error(error.message);
+        } finally {
+            this.setState({
+                loading: false,
+            });
+        }
+    };
+
+
+    render() {
+        const { loading, reservations } = this.state;
+
+
+        return (
+            <List
+                loading={loading}
+                dataSource={reservations}
+                renderItem={(item) => (
+                    <List.Item>
+                        <List.Item.Meta
+                            title={<Text>Guest Name: {item.guest.username}</Text>}
+                            description={
+                                <>
+                                    <Text>Checkin Date: {item.checkInDate}</Text>
+                                    <br />
+                                    <Text>Checkout Date: {item.checkOutDate}</Text>
+                                </>
+                            }
+                        />
+                    </List.Item>
+                )}
+            />
         );
     }
 }
